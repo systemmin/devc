@@ -89,7 +89,7 @@ func main() {
 			translate := internal.Translate(data)
 			fmt.Println("原文->", data)
 			fmt.Println("翻译->", translate)
-			if *w {
+			if *w && len(translate) > 0 {
 				err := internal.SetClipboardData(translate)
 				if err != nil {
 					fmt.Println("写入失败")
@@ -106,11 +106,13 @@ func main() {
 					tempWrite = internal.SetData(line, *hump)
 				} else if len(data) <= length*3 {
 					translate := internal.Translate(data)
-					line = fmt.Sprintf("%s|%s\n", data, internal.ToCamelCase(translate))
-					fmt.Print("翻译->" + line)
-					go internal.SaveDicts(devPath, line)
-					dicts = append(dicts, line)
-					tempWrite = internal.SetData(line, *hump)
+					if len(translate) > 0 {
+						line = fmt.Sprintf("%s|%s\n", data, internal.ToCamelCase(translate))
+						fmt.Print("翻译->" + line)
+						go internal.SaveDicts(devPath, line)
+						dicts = append(dicts, line)
+						tempWrite = internal.SetData(line, *hump)
+					}
 				}
 			} else if textType == internal.ENGLISH { // 英文
 				line := internal.FindDict(data, dicts)

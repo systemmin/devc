@@ -54,6 +54,30 @@ Usage of devc:
 - `-tran`：开启自动检测翻译，关键字翻译将关闭。
 - `-w`：将翻译后的内容写入剪切板。
 
+
+## 数据保存
+
+### 历史记录
+
+- **默认保存路径**：`%APPDATA%\devc`。
+- **自定义保存路径**：通过配置 `DEVC` 环境变量指定路径。
+  - 打开系统环境变量设置。
+  - 添加一个名为 `DEVC` 的环境变量，值为自定义路径（例如 `D:\devc_data`）。
+
+### 字典文件
+
+- **字典文件**：`dict.txt`
+- **文件格式**：
+  ```lua
+  协程|coroutine|Coroutine|coroutine|coroutine
+  格式转换|Format conversion|FormatConversion|formatConversion|format_conversion
+  解析文件|Parsing file|ParsingFile|parsingFile|parsing_file
+  文件路径|File path|FilePath|filePath|file_path
+  ```
+  - 每行表示一个关键字及其翻译。
+  - 格式为：`中文|英文|大驼峰|小驼峰|下划线`。
+- **自定义字典文件**：将自定义的 `dict.txt` 文件放置在历史记录目录中，或通过环境变量指定路径。
+
 ## 使用示例
 
 ### 基础使用
