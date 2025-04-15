@@ -78,7 +78,7 @@ func main() {
 	watch := internal.Watch()
 	for data := range watch {
 		// 跳过空内容、跳过写入剪切板内容
-		if len(strings.TrimSpace(data)) == 0 || strings.Contains(tempWrite, data) {
+		if len(strings.TrimSpace(data)) == 0 || strings.Contains(tempWrite, data) || tempWrite == data {
 			continue
 		}
 
@@ -94,6 +94,7 @@ func main() {
 				if err != nil {
 					fmt.Println("写入失败")
 				}
+				tempWrite = translate
 			}
 		} else {
 			// 内容分类
