@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 // ToCamelCase 驼峰命名，返回内容 Chinese character|ChineseCharacter|chineseCharacter|chinese_character
@@ -36,6 +37,27 @@ func ToCamelCase(content string) string {
 	}
 	result = append(result, content, strings.Join(greatHump, ""), strings.Join(smallHump, ""), strings.Join(underLine, "_"))
 	return strings.Join(result, "|")
+}
+
+// CamelToWord 驼峰命名转单词
+func CamelToWord(s string) string {
+	// 下划线命名
+	if strings.Contains(s, "_") {
+		return strings.Join(strings.Split(s, "_"), " ")
+	}
+	var result strings.Builder
+	for i, r := range s {
+		// 如果是大写字母，且不是第一个字符，则在前面加上空格
+		if unicode.IsUpper(r) {
+			if i > 0 {
+				result.WriteRune(' ')
+			}
+			result.WriteRune(unicode.ToLower(r))
+		} else {
+			result.WriteRune(r)
+		}
+	}
+	return result.String()
 }
 
 // AppendFile 追加写入

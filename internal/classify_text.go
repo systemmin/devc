@@ -37,7 +37,11 @@ func IsCamelCase(text string) bool {
 	if !match {
 		// 大驼峰
 		re = regexp.MustCompile(`^[A-Z][a-z]+(?:[A-Z][a-z]*)+$`)
-		return re.MatchString(text)
+		match = re.MatchString(text)
+	}
+	if !match {
+		// 下划线
+		match = isSnakeCase(text)
 	}
 	return match
 }
@@ -123,9 +127,6 @@ func ClassifyText(text string) int {
 	} else if IsCamelCase(text) {
 		fmt.Println("驼峰命名")
 		return CAMEL_CASE
-	} else if isSnakeCase(text) {
-		fmt.Println("下划线命名")
-		return SNAKE_CASE
 	} else if IsCodeSnippet(text) {
 		fmt.Println("代码片段")
 		return CODE_SNIPPET
