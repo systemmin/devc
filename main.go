@@ -35,10 +35,10 @@ func init() {
 	flag.Parse()
 
 	// 打印参数值
-	fmt.Println("top:", *top)
-	fmt.Println("han:", *han)
-	fmt.Println("hump:", *hump)
-	fmt.Println("tran:", *tran)
+	//fmt.Println("top:", *top)
+	//fmt.Println("han:", *han)
+	//fmt.Println("hump:", *hump)
+	//fmt.Println("tran:", *tran)
 
 	// 应用程序数据的存储目录
 	devPath = os.Getenv("DEVC")
@@ -123,7 +123,6 @@ func main() {
 					translate := internal.Translate(data)
 					fmt.Println("中文->", data)
 					fmt.Println("英文->", translate)
-
 				}
 			} else {
 				fmt.Println("排除内容->" + data)

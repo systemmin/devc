@@ -125,3 +125,7 @@ devc -tran -w
 
 欢迎通过 GitHub 提交 Issue 或 Pull Request，帮助改进 `devc`。
 
+## 参考资料
+
+- [Window API](https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-openclipboard)
+- [Github atotto/clipboard](https://github.com/atotto/clipboard/blob/master/clipboard_windows.go)
