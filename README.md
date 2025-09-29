@@ -39,6 +39,10 @@ Usage of devc:
         [翻译工具] 开启自动检测翻译，关键字翻译将关闭
   -w
         [翻译工具|关键字翻译] 将翻译内容写入剪切板
+  -api string
+        ollama api (default "http://127.0.0.1:11434")
+  -model string
+        ollama model
 ```
 
 [**注意**]：关键字翻译和翻译工具命令不能同时，同时使用优先翻译工具，未指定参数默认关键字翻译
@@ -53,6 +57,8 @@ Usage of devc:
 - `-top`：将当前 CMD 窗口置顶。
 - `-tran`：开启自动检测翻译，关键字翻译将关闭。
 - `-w`：将翻译后的内容写入剪切板。
+- `-api`：Ollama api 地址。
+- `-model`：Ollama model。
 
 
 ## 数据保存

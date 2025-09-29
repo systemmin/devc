@@ -9,6 +9,9 @@
 package internal
 
 import (
+	bytes2 "bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -17,7 +20,15 @@ import (
 )
 
 // Translate 翻译
-func Translate(content string) string {
+func Translate(api, model, content string) string {
+	if len(model) != 0 {
+		return TranslateOllama(api, model, content)
+	}
+	return TranslateYouDao(content)
+}
+
+// TranslateYouDao 翻译
+func TranslateYouDao(content string) string {
 	client := &http.Client{}
 	var data = strings.NewReader("inputtext=" + content + "&type=AUTO")
 	req, err := http.NewRequest("POST", "https://m.youdao.com/translate", data)
@@ -42,6 +53,80 @@ func Translate(content string) string {
 	}
 	result := string(bytes)
 	return matchContent(result)
+}
+
+type Input struct {
+	Model    string    `json:"model"`
+	Messages []Message `json:"messages"`
+	Stream   bool      `json:"stream"`
+}
+
+type Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+// TranslateOllama 翻译
+func TranslateOllama(api, model, content string) string {
+
+	// 角色设定
+	sysContent := `You are a professional technical translator. 
+Your task is to translate the input text between English and Simplified Chinese, depending on the input language. 
+The text is mainly technical documentation, developer manuals, function/method comments, or code-related explanations. 
+
+Translation rules:
+1. Detect the input language automatically and translate it into the other language (English ↔ Simplified Chinese).
+2. Keep technical terms (e.g., API, class, HTTP, JSON, SQL) in their original form unless there is a widely accepted translation.
+3. Method names, function names, variable names, file paths, and code snippets must remain unchanged.
+4. Use concise, formal, and professional style suitable for developer documentation.
+5. Ensure the translation is accurate, consistent, and natural.
+6. Do not add extra explanations, only output the translated text.`
+
+	input := Input{
+		Model: model,
+		Messages: []Message{
+			{
+				Role:    "system",
+				Content: sysContent,
+			},
+			{
+				Role:    "user",
+				Content: content,
+			},
+		},
+		Stream: false,
+	}
+
+	client := &http.Client{}
+	marshal, _ := json.Marshal(input)
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/chat", api), bytes2.NewBuffer(marshal))
+	if err != nil {
+		log.Println(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("请求失败 - ", err)
+		return TranslateYouDao(content)
+	}
+	defer resp.Body.Close()
+
+	// 检查响应状态码
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("状态码错误 - ", resp.StatusCode)
+		return TranslateYouDao(content)
+	}
+
+	bytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+	}
+	var result map[string]interface{}
+	err = json.Unmarshal(bytes, &result)
+	message := result["message"].(map[string]interface{})
+	apiContent := message["content"].(interface{})
+	return apiContent.(string)
 }
 
 // 匹配内容
